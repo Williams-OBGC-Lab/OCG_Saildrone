@@ -15,5 +15,5 @@ dependencies:
   - bottleneck=1.3.2
   - jupytext=1.11.3
   - pip:
-    - PyCO2SYS=1.6.0
-    - ipynb=0.5.1
+    - PyCO2SYS
+    - ipynb
