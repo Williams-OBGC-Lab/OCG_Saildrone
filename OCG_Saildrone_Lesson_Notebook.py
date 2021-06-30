@@ -107,14 +107,14 @@ circle = mpath.Path(verts * radius + center)
 
 # Plot the ACC fronts in various colors
 ax.set_boundary(circle, transform=ax.transAxes)
-plt.plot(stf['lon'], stf['lat'], color='Red', transform=ccrs.PlateCarree(), 
-         label = 'Subtropical Front')
+#plt.plot(stf['lon'], stf['lat'], color='Red', transform=ccrs.PlateCarree(), 
+#         label = 'Subtropical Front')
 plt.plot(saf['lon'], saf['lat'], color='Orange', transform=ccrs.PlateCarree(), 
          label = 'Subantarctic Front')
-plt.plot(pf['lon'], pf['lat'], color='Yellow', transform=ccrs.PlateCarree(), 
-         label = 'Polar Front')
-plt.plot(saccf['lon'], saccf['lat'], color='Green', transform=ccrs.PlateCarree(), 
-         label = 'Southern ACC Front')
+#plt.plot(pf['lon'], pf['lat'], color='Yellow', transform=ccrs.PlateCarree(), 
+#         label = 'Polar Front')
+#plt.plot(saccf['lon'], saccf['lat'], color='Green', transform=ccrs.PlateCarree(), 
+#         label = 'Southern ACC Front')
 plt.plot(sbdy['lon'], sbdy['lat'], color='Blue', transform=ccrs.PlateCarree(), 
          label = 'Southern Boundary of ACC')
 
@@ -152,14 +152,14 @@ circle = mpath.Path(verts * radius + center)
 
 # Plot the ACC fronts in various colors
 ax.set_boundary(circle, transform=ax.transAxes)
-plt.plot(stf['lon'], stf['lat'], color='Red', transform=ccrs.PlateCarree(), 
-         label = 'Subtropical Front')
+#plt.plot(stf['lon'], stf['lat'], color='Red', transform=ccrs.PlateCarree(), 
+#         label = 'Subtropical Front')
 plt.plot(saf['lon'], saf['lat'], color='Orange', transform=ccrs.PlateCarree(), 
          label = 'Subantarctic Front')
-plt.plot(pf['lon'], pf['lat'], color='Yellow', transform=ccrs.PlateCarree(), 
-         label = 'Polar Front')
-plt.plot(saccf['lon'], saccf['lat'], color='Green', transform=ccrs.PlateCarree(), 
-         label = 'Southern ACC Front')
+#plt.plot(pf['lon'], pf['lat'], color='Yellow', transform=ccrs.PlateCarree(), 
+#         label = 'Polar Front')
+#plt.plot(saccf['lon'], saccf['lat'], color='Green', transform=ccrs.PlateCarree(), 
+#         label = 'Southern ACC Front')
 plt.plot(sbdy['lon'], sbdy['lat'], color='Blue', transform=ccrs.PlateCarree(), 
          label = 'Southern Boundary of ACC')
 
@@ -203,6 +203,9 @@ xr.plot.contour(satellite_ssh.adt[0,:,:],levels=levels_1,colors='k',linewidths=0
 plt.xlim(tlon.min()+360-5,tlon.max()+360+5)
 plt.ylim(tlat.min()-5,tlat.max()+5)
 
+#add Subantarctic Front
+plt.plot(saf['lon']+365, saf['lat'], color='Orange', linewidth=3, label = 'Subantarctic Front')
+
 #add Saildrone track
 plt.scatter(Saildrone_CO2.Longitude+360, Saildrone_CO2.Latitude, c=c1, s=3, label='Saildrone', zorder=1000)
 plt.legend()
@@ -213,7 +216,7 @@ plt.savefig(output_dir + 'Sea_surface_height_Saildrone_Feb10' + '.jpg')
 
 # -
 
-# Ocean eddies can be identified by closed rings of constant absolute dynamic topography (this is the anomaly in sea surface height from average sea level in meters, which represents changes in pressure). You can see the Saildrone's path crossing near the center of an eddy.
+# ## Ocean eddies can be identified by closed rings of constant absolute dynamic topography (this is the anomaly in sea surface height from average sea level in meters, which represents changes in pressure). You can see the Saildrone's path crossing near the center of an eddy.
 #
 # We can do the same thing with satellite chlorophyll-a data. The chlorophyll-a data gives an approximate estimate of the relative phytoplankton biomass (in units of mg/m<sup>3</sup>) at the sea surface in different locations. 
 
