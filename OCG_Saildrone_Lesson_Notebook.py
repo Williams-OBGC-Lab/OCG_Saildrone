@@ -43,6 +43,7 @@ import matplotlib.path as mpath
 import cartopy.crs as ccrs
 import cartopy.feature
 from datetime import datetime
+import plotly.graph_objects as go
 
 # add something
 # -
