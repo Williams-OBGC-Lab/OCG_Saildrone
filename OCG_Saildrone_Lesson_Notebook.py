@@ -18,10 +18,15 @@
 
 # ## To Do List:
 # * add more markdown in the form of instructions, pictures, pulling variables out into their own cell so girls know where they can make changes to the code
-# * in figure titles and filenames, change the variables from using the first four characters (currently var[:4]) to instead cutting off at the first underscore
 # * try plotting previous 8-day chl-a snapshot to see if it has better coverage for the eddy crossing
-# * edit to make it easy to adjust time series x-axis limits
 # * Check Veronica's carbon flux calculation is correct and add units (Nancy)
+# * Switch to xarray for Saildrone dataset
+# * Look at Chelle Gentemann's notebook and see if anything you want to bring in https://github.com/python4oceanography/ocean_python_tutorial/blob/master/notebooks/Tutorial_08_Xarray-Collocate_gridded_data_with_experiment.ipynb
+#
+# If time:
+# * in figure titles and filenames, change the variables from using the first four characters (currently var[:4]) to instead cutting off at the first underscore
+# * edit to make it easy to adjust time series x-axis limits
+#
 
 
 # ## Data Sources:
