@@ -1,5 +1,6 @@
 # OCG_Saildrone
 Oceanography Camp for Girls Saildrone Lesson * WORK IN PROGRESS*
+Funded by the National Science Foundation Office of Polar Programs Grant Number PLR2048840 https://www.nsf.gov/awardsearch/showAward?AWD_ID=2048840
 
 ![A photo of a Saildone, an autonomous sailing vehicle](https://github.com/Williams-OBGC-Lab/OCG_Saildrone/blob/master/Images/SD_1020_A_6.jpeg)
 

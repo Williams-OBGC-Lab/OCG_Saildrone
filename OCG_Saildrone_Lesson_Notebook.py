@@ -15,6 +15,9 @@
 
 # # 2021 Oceanography Camp for Girls Saildrone Lesson
 # Developed by Nancy Williams, Veronica Tamsitt, Nicola Guisewhite at University of South Florida College of Marine Science
+#
+# Funded by the National Science Foundation Office of Polar Programs Grant Number PLR2048840: https://www.nsf.gov/awardsearch/showAward?AWD_ID=2048840
+#
 
 # ## To Do List:
 # * add more markdown in the form of instructions, pictures, pulling variables out into their own cell so girls know where they can make changes to the code
@@ -188,6 +191,7 @@ plt.show()
 # First we need to load in a single daily satellite sea surface height data file from Feb 10th 2019, the day the Saildrone crossed a large eddy.
 
 satellite_ssh = xr.open_dataset(data_dir + 'ssh_2019_02_10.nc')
+satellite_ssh
 
 # Now plot the Saildrone path on a map of sea surface height for a region surrounding the Saildrone on Feb 10th
 
@@ -361,10 +365,12 @@ plt.figure(figsize=(12,5))
 ax1 = plt.subplot(211)
 ax1.plot(Saildrone_phys.time,Saildrone_phys[var1])
 plt.xlim(Saildrone_phys.time.values[0],Saildrone_phys.time.values[-1])
+plt.ylabel(var1)
 
 ax2 = plt.subplot(212)
 ax2.plot(Saildrone_phys.time,Saildrone_phys[var2])
 plt.xlim(Saildrone_phys.time.values[0],Saildrone_phys.time.values[-1])
+plt.ylabel(var2)
 plt.show()
 # -
 # Next, we can calculate the flux of carbon between the ocean and the atmosphere based on the difference in pCO2 between the atmosphere and the ocean. 
