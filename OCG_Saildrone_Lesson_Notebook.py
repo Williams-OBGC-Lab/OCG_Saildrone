@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # 2021 Oceanography Camp for Girls Saildrone Lesson
+# # 2021 Oceanography Camp for Girls (OCG) Saildrone Lab
 # Developed by Nancy Williams, Veronica Tamsitt, Nicola Guisewhite at University of South Florida College of Marine Science
 #
 # Funded by the National Science Foundation Office of Polar Programs Grant Number PLR2048840: https://www.nsf.gov/awardsearch/showAward?AWD_ID=2048840
