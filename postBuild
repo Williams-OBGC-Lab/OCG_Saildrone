@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+jupyter lab build
+jupyter serverextension enable jupytext

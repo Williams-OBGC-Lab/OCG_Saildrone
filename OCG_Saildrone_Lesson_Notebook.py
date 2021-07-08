@@ -13,16 +13,23 @@
 #     name: python3
 # ---
 
-# # 2021 Oceanography Camp for Girls Saildrone Lesson
+# # 2021 Oceanography Camp for Girls (OCG) Saildrone Lab
 # Developed by Nancy Williams, Veronica Tamsitt, Nicola Guisewhite at University of South Florida College of Marine Science
 #
-# ***
+
+# Funded by the National Science Foundation Office of Polar Programs Grant Number PLR2048840: https://www.nsf.gov/awardsearch/showAward?AWD_ID=2048840
 #
+
 # ## To Do List:
-# * make a function for plotting instead of copy/pasting the map each time (or not, if we want to keep it simple)
-# * explore https://jupytext.readthedocs.io/en/latest/ to iron out issues with version controlling Jupyter notebooks
 # * add more markdown in the form of instructions, pictures, pulling variables out into their own cell so girls know where they can make changes to the code
+# * try plotting previous 8-day chl-a snapshot to see if it has better coverage for the eddy crossing
+# * Check Veronica's carbon flux calculation is correct and add units (Nancy)
+# * Switch to xarray for Saildrone dataset
+# * Look at Chelle Gentemann's notebook and see if anything you want to bring in https://github.com/python4oceanography/ocean_python_tutorial/blob/master/notebooks/Tutorial_08_Xarray-Collocate_gridded_data_with_experiment.ipynb
+#
+# If time:
 # * in figure titles and filenames, change the variables from using the first four characters (currently var[:4]) to instead cutting off at the first underscore
+# * edit to make it easy to adjust time series x-axis limits
 #
 # ***
 #
@@ -47,6 +54,10 @@
 #
 # Before we start working with the data, the first step of any Python script is to import specific modules, these will be the toolkits you need to load, analyse, and plot the data. If you're interested and want to learn more about how Python modules work, check out this [link](https://www.w3schools.com/python/python_modules.asp)
 
+
+# +
+# Import the tools you need
+
 import os
 import numpy as np
 import pandas as pd
@@ -55,6 +66,11 @@ import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 import cartopy.crs as ccrs
 import cartopy.feature
+from datetime import datetime
+import plotly.graph_objects as go
+
+# add something
+# -
 
 # ### Define file paths
 # Next, we'll define file paths so that the code knows where to find the data files and where to save output, like figures
@@ -128,14 +144,14 @@ circle = mpath.Path(verts * radius + center)
 
 # Plot the ACC fronts in various colors
 ax.set_boundary(circle, transform=ax.transAxes)
-plt.plot(stf['lon'], stf['lat'], color='Red', transform=ccrs.PlateCarree(), 
-         label = 'Subtropical Front')
+#plt.plot(stf['lon'], stf['lat'], color='Red', transform=ccrs.PlateCarree(), 
+#         label = 'Subtropical Front')
 plt.plot(saf['lon'], saf['lat'], color='Orange', transform=ccrs.PlateCarree(), 
          label = 'Subantarctic Front')
-plt.plot(pf['lon'], pf['lat'], color='Yellow', transform=ccrs.PlateCarree(), 
-         label = 'Polar Front')
-plt.plot(saccf['lon'], saccf['lat'], color='Green', transform=ccrs.PlateCarree(), 
-         label = 'Southern ACC Front')
+#plt.plot(pf['lon'], pf['lat'], color='Yellow', transform=ccrs.PlateCarree(), 
+#         label = 'Polar Front')
+#plt.plot(saccf['lon'], saccf['lat'], color='Green', transform=ccrs.PlateCarree(), 
+#         label = 'Southern ACC Front')
 plt.plot(sbdy['lon'], sbdy['lat'], color='Blue', transform=ccrs.PlateCarree(), 
          label = 'Southern Boundary of ACC')
 
@@ -179,14 +195,14 @@ circle = mpath.Path(verts * radius + center)
 
 # Plot the ACC fronts in various colors
 ax.set_boundary(circle, transform=ax.transAxes)
-plt.plot(stf['lon'], stf['lat'], color='Red', transform=ccrs.PlateCarree(), 
-         label = 'Subtropical Front')
+#plt.plot(stf['lon'], stf['lat'], color='Red', transform=ccrs.PlateCarree(), 
+#         label = 'Subtropical Front')
 plt.plot(saf['lon'], saf['lat'], color='Orange', transform=ccrs.PlateCarree(), 
          label = 'Subantarctic Front')
-plt.plot(pf['lon'], pf['lat'], color='Yellow', transform=ccrs.PlateCarree(), 
-         label = 'Polar Front')
-plt.plot(saccf['lon'], saccf['lat'], color='Green', transform=ccrs.PlateCarree(), 
-         label = 'Southern ACC Front')
+#plt.plot(pf['lon'], pf['lat'], color='Yellow', transform=ccrs.PlateCarree(), 
+#         label = 'Polar Front')
+#plt.plot(saccf['lon'], saccf['lat'], color='Green', transform=ccrs.PlateCarree(), 
+#         label = 'Southern ACC Front')
 plt.plot(sbdy['lon'], sbdy['lat'], color='Blue', transform=ccrs.PlateCarree(), 
          label = 'Southern Boundary of ACC')
 
@@ -211,7 +227,9 @@ plt.show()
 #
 # First we need to load in a single daily satellite sea surface height data file from Feb 10th 2019, the day the Saildrone crossed a large eddy.
 
+
 satellite_ssh = xr.open_dataset(data_dir + 'ssh_2019_02_09.nc')
+
 
 # Now plot the Saildrone path on a map of sea surface height for a region surrounding the Saildrone on Feb 10th
 
@@ -232,6 +250,9 @@ xr.plot.contour(satellite_ssh.sla[0,:,:],levels=levels_1,colors='k',linewidths=0
 plt.xlim(tlon+360-5,tlon+360+5)
 plt.ylim(tlat-5,tlat+5)
 
+#add Subantarctic Front
+plt.plot(saf['lon']+365, saf['lat'], color='Orange', linewidth=3, label = 'Subantarctic Front')
+
 #add Saildrone track
 plt.scatter(Saildrone_phys.longitude+360, Saildrone_phys.latitude, c=c1, s=3, label='Saildrone', zorder=1000)
 plt.legend()
@@ -242,9 +263,14 @@ plt.savefig(output_dir + 'Sea_surface_height_Saildrone_Feb10' + '.jpg')
 
 # -
 
-# Ocean eddies can be identified by closed rings of constant absolute dynamic topography (this is the anomaly in sea surface height from average sea level in meters, which represents changes in pressure). You can see the Saildrone's path crossing near the center of an eddy.
+# ## Ocean eddies can be identified by closed rings of constant absolute dynamic topography (this is the anomaly in sea surface height from average sea level in meters, which represents changes in pressure). You can see the Saildrone's path crossing near the center of an eddy.
 #
 # We can do the same thing with satellite chlorophyll-a data. The chlorophyll-a data gives an approximate estimate of the relative phytoplankton biomass (in units of mg/m<sup>3</sup>) at the sea surface in different locations. 
+
+#load satellite chl-a data file
+satellite_chla = xr.open_dataset(data_dir + 'A20190412019048.L3m_8D_CHL_chlor_a_4km.nc')
+
+# Here you can edit parameters (colors, range etc) for the map
 
 #set plot parameters (contour levels, colormap etc)
 levels_1 = np.arange(0,1.0,0.01) #contour levels
@@ -252,13 +278,11 @@ cmap_1 = 'YlGnBu' #contour map colormap
 c1 = 'black' #Saildrone track color
 
 # +
-#load satellite chl-a data file
-satellite_chla = xr.open_dataset(data_dir + 'A2019041.L3m_DAY_CHL_chlor_a_4km.nc')
-
 #make a contour plot of chl-a data 
-xr.plot.contourf(satellite_chla.chlor_a,levels=levels_1,cmap=cmap_1,size=8,aspect=2)
-plt.xlim(tlon-30,tlon+30)
-plt.ylim(tlat-20,tlat+20)
+satellite_chla.chlo_a.values[satellite_chla.chlo_a>1000] = np.nan
+xr.plot.contourf(satellite_chla.chlo_a, levels = levels_1, cmap=cmap_1,size=8,aspect=2)
+plt.xlim(tlon-5,tlon+5)
+plt.ylim(tlat-5,tlat+5)
 
 #add Saildrone track
 plt.scatter(Saildrone_phys.longitude, Saildrone_phys.latitude, c=c1, s=3, label='Saildrone', zorder=1000)
@@ -315,13 +339,10 @@ var1_max = 18
 var2_min = 230
 var2_max = 340
 
-#choose color for scatterplot
-c1 = 'b'
-
 # +
 #create scatter plot
 plt.figure(figsize=(12,8))
-plt.scatter(Saildrone_phys[var1], Saildrone_phys[var2], c=c1, s=10)
+plt.scatter(Saildrone_phys[var1], Saildrone_phys[var2], s=10)
 plt.xlim(var1_min,var1_max)
 plt.ylim(var2_min,var2_max)
 plt.xlabel(var1)
@@ -363,11 +384,19 @@ plt.title('Saildrone '+ var1[:4] + ' vs ' + var2[:4])
 plt.savefig(output_dir + 'Saildrone_' + var1[:4] + '_vs_' + var2[:4] + '_vs_' + var3[:4] + '.jpg')
 # -
 
-# Plot time series of wind and pressure data
+# Plot time series of wind speed and pressure
 
-#set plot parameters
-var1 = 'UWND_MEAN'
+#calc wind speed from u and v winds
+Saildrone_phys['WSPD'] = np.sqrt(np.power(Saildrone_phys['UWND_MEAN'],2)+np.power(Saildrone_phys['VWND_MEAN'],2))
+
+# +
+#input plot parameters
+
+#variables to plot
+var1 = 'WSPD'
 var2 = 'BARO_PRES_MEAN'
+
+#set x axis limits
 
 # +
 #plot time series
@@ -375,10 +404,83 @@ plt.figure(figsize=(12,5))
 ax1 = plt.subplot(211)
 ax1.plot(Saildrone_phys.time,Saildrone_phys[var1])
 plt.xlim(Saildrone_phys.time.values[0],Saildrone_phys.time.values[-1])
+plt.ylabel(var1)
 
 ax2 = plt.subplot(212)
 ax2.plot(Saildrone_phys.time,Saildrone_phys[var2])
 plt.xlim(Saildrone_phys.time.values[0],Saildrone_phys.time.values[-1])
+plt.ylabel(var2)
+plt.show()
+# -
+# Next, we can calculate the flux of carbon between the ocean and the atmosphere based on the difference in pCO2 between the atmosphere and the ocean. 
+
+
+# +
+#constants for CO2 flux calculation
+#ocean/atmosphere variables needed as inputs
+T = Saildrone_CO2['SST (C)'] #sea surface temperature
+S  = Saildrone_CO2['Salinity'] #sea surface salinity
+u = Saildrone_CO2['WSPD (m/s)'] #surface wind speed
+dpCO2 = Saildrone_CO2['dpCO2'] #difference between ocean and atmosphere pCO2
+
+#1. Calculate the transfer velocity (Wanninkhof et al. 2014)
+#Schmidt number as a function of temperature 
+Sc = 2116.8-136.25*T  + 4.7353*np.power(T,2) - 0.092307*np.power(T,3) + 0.000755*np.power(T,4)
+K = 0.251*(u*u)*np.power((Sc/660),-0.5)
+K = K
+
+#2. calculate solubility constant as a function of temperature and salinity 
+T_K = T + 273.15
+K0 = -58.0931 + ( 90.5069*(100.0 /T_K) ) \
+    + (22.2940 * (np.log(T_K/100.0))) + (S * (0.027766 +  ( (-0.025888)*(T_K/100.0)) \
+    + (0.0050578*( (T_K/100.0)*(T_K/100.0) ) ) ) )
+a = np.exp(K0)
+
+#CO2 flux equation
+Saildrone_CO2['FCO2'] = 0.24 * K * a * dpCO2  #FCO2 = K*a(dpCO2)
+# -
+
+# Let's plot the time series of carbon fluxes together with the time series of wind speed to see how they are related. Sign of FCO2?
+
+# +
+#variables to plot
+var1 = 'WSPD (m/s)'
+var2 = 'FCO2'
+
+#colors
+c1 = 'darkblue'
+c2 = 'darkorange'
+
+# +
+#convert date and time from Saildrone_CO2 file to numpy datetime64 array
+date_object = np.empty(len(Saildrone_CO2['Date'])).astype(datetime)
+for t in range(len(Saildrone_CO2['Date'])):
+  dt = Saildrone_CO2['Date'].values[t]
+  tm = Saildrone_CO2['Time'].values[t]
+  date_object[t] = np.datetime64(datetime.strptime(dt+' '+tm,'%m/%d/%Y %H:%M'))
+Saildrone_CO2['datetime'] = date_object #save to dataframe
+
+#plot time series
+fig, ax1 = plt.subplots(figsize=(12,5))
+
+#y axis 1
+ax1.plot(Saildrone_CO2['datetime'],Saildrone_CO2[var1],color=c1)
+ax1.set_xlabel('date')
+ax1.set_ylabel(var1, color=c1)
+ax1.tick_params(axis='y', labelcolor=c1)
+
+#y axis 2
+ax2 = ax1.twinx()
+ax2.plot(Saildrone_CO2['datetime'],-Saildrone_CO2[var2],color=c2)
+ax2.set_xlabel('date')
+ax2.set_ylabel(var2, color=c2)
+ax2.tick_params(axis='y', labelcolor=c2)
+
+ax2.plot([Saildrone_CO2['datetime'].values[0], Saildrone_CO2['datetime'].values[-1]],[0,0],
+         color='black', linewidth=0.5)
+plt.xlim(Saildrone_CO2['datetime'][0],Saildrone_CO2['datetime'][1800])
+fig.tight_layout()
+plt.show()
 # -
 
 
