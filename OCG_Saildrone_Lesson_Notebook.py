@@ -43,7 +43,7 @@
 # ***
 #
 # ## Structure of this lesson
-# This lesson will guide you through loading data from the Saildrone 2019 Antarctic circumnavigation, exploring and plot the data, compare the Saildrone data to remotely sensed observations from satellites, and explore the relationships between different ocean variables. Along the way you will have the opportunity to manipulate the data and make some changes to the plots, and hopefully learn a little bit of Python code along the way.
+# This lesson will guide you through loading data from the Saildrone 2019 Antarctic circumnavigation, exploring and plotting the data, comparing the Saildrone data to remotely sensed observations from satellites, and exploring the relationships between different ocean variables. Along the way you will have the opportunity to manipulate the data and make some changes to the plots, and hopefully learn a little bit of Python code.
 # 1. Loading the Saildrone data
 # 2. Mapping the Saildrone circumnavigation path and plotting physical data along the path
 # 3. Comparing the Saildrone data to maps of satellite sea surface height and chlorophyll-a
@@ -98,6 +98,10 @@ Saildrone_CO2
 ds = xr.open_dataset(data_dir + 'saildrone-gen_5-antarctica_circumnavigation_2019-sd1020-20190119T040000-20190803T043000-1_minutes-v1.1620360815446.nc')
 Saildrone_phys = ds.to_dataframe()
 Saildrone_phys
+
+# There are a lot of columns in this file! If we want to see them all, we can list the columns using:
+
+list(Saildrone_phys.columns)
 
 # ## 2. Map the Saildrone path
 #
