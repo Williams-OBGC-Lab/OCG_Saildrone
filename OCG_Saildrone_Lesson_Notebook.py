@@ -63,7 +63,7 @@ import matplotlib.path as mpath
 import cartopy.crs as ccrs
 import cartopy.feature
 from datetime import datetime
-import plotly.graph_objects as go
+#import plotly.graph_objects as go
 
 # ### Define file paths
 # Next, we'll define file paths so that the code knows where to find the data files and where to save output, like figures
@@ -120,7 +120,8 @@ saccf = pd.read_csv(data_dir + 'fronts/saccf.txt', header=None, sep='\s+',
 sbdy = pd.read_csv(data_dir + 'fronts/sbdy.txt', header=None, sep='\s+', 
                    na_values='%', names=['lon','lat'])
 
-# Now finally we can make a map the Saildrone track and ACC fronts. Note that it might take a few seconds for the code to finish generating the figure before it appears.
+# + active=""
+# Now finally we can make a map the Saildrone track and northern and southern boundary fronts of the Antarctic Circumpolar Current. Note that it might take a few seconds for the code to finish generating the figure before it appears.
 
 # +
 # Make the "bones" of the figure
@@ -167,7 +168,7 @@ plt.show()
 
 # Congratulations! You've now made a map of the Saildrone circumnavigation track and it has been saved in the output folder as `SaildroneMap.jpg`.
 #
-# **Q: why is it useful to compare the Saildrone path with the position of the ocean fronts? How many different zones (between the ocean fronts) does the Saildrone pass through during it's circumnavigation?**
+# **Q: why is it useful to compare the Saildrone path with the position of the fronts of the Antarctic Circumpolar Curreent? How much of the Saildrone path lies within the boundaries of the Antarctic Circumpolar Current?**
 #
 # We can make our map more interesting by using coloured scatter points to show a variable from the Saildrone data on the map. In the following code cell we define which data variable to plot on the map (defined as `var`), which colormap to use to plot the data (defined as `cmap_1`, see more colormap options [here](https://matplotlib.org/stable/tutorials/colors/colormaps.html)), and the lower and upper data values to use for the colormap (defined as `v_min` and `v_max`). Initially this code is set up to plot the sea surface temperature from the Saildrone physical data, but once you've made the figure below you can try changing `var` and re-run the code below to plot a different variable (to see a list of all the variables in `Saildrone_phys` you can run `Saildrone_phys.columns` in a code cell). If you plot a different variable you might also want to play with changing the colorbar and colorbar limits.
 
@@ -220,7 +221,9 @@ plt.savefig(output_dir + var[:4] + 'SaildroneMap' + '.jpg') # Changing the suffi
 plt.show()
 # -
 
-# ## 3. Comparing Saildrone with Satellite observations
+# **Q: Can you describe the temperature variation along the Saildrone path? Is this related to the fronts of the Antarctic Circumpolar Current?**
+
+# ## 3. Comparing Saildrone with satellite observations
 #
 # Now that we've looked at some of the Saildrone data on a map, it's useful to put the data into context by plotting the Saildrone path on maps of surface ocean properties obtained from satellites. In particular, satellite sea surface height (measured in meters relative to background sea level) gives us a measure of pressure differences at the ocean surface, and therefore the direction of the surface currents (similar to pressure lines on a weather map). Ocean eddies can be identified by closed rings of constant sea level anomaly (meters). We know that the Saildrone crossed an eddy on around Feb 10th 2019, so we can make a map of sea level anomaly on that day to see the path of the Saildrone across the eddy. 
 #
@@ -234,7 +237,7 @@ satellite_ssh = xr.open_dataset(data_dir + 'ssh_2019_02_09.nc')
 
 levels_1 = np.arange(-0.6,0.4,0.05) #levels of sea level anomaly to contour
 cmap_1 = 'viridis' #contour map colormap
-c1 = 'black' #Saildrone track color
+c1 = 'magenta' #Saildrone track color
 
 # Now make the map:
 
@@ -247,8 +250,8 @@ tlat = Saildrone_phys.latitude.values[time_index]
 #make a contour plot of satellite ssh
 xr.plot.contourf(satellite_ssh.sla[0,:,:],levels=levels_1,cmap=cmap_1,size=8,aspect=2)
 xr.plot.contour(satellite_ssh.sla[0,:,:],levels=levels_1,colors='k',linewidths=0.75)
-plt.xlim(tlon+360-5,tlon+360+5)
-plt.ylim(tlat-5,tlat+5)
+plt.xlim(tlon+360-24,tlon+360+24)
+plt.ylim(tlat-12,tlat+12)
 
 #add Subantarctic Front
 plt.plot(saf['lon']+365, saf['lat'], color='Orange', linewidth=3, label = 'Subantarctic Front')
@@ -262,30 +265,47 @@ plt.title('Saildrone path across an eddy on Feb 10th')
 plt.savefig(output_dir + 'Sea_surface_height_Saildrone_Feb10' + '.jpg')
 # -
 
-# **Q: What do you see in the sea level anomaly? Can you identify the eddy (or eddies!) crossed by the Saildrone?**
+# **Q: What do you see in the sea level anomaly? Can you identify the eddies crossed by the Saildrone (magenta line)?**
 #
-# We can do the same thing with satellite chlorophyll-a data. The chlorophyll-a data gives an approximate estimate of the relative phytoplankton biomass (in units of mg/m<sup>3</sup>) at the sea surface in different locations. 
+# Next we are going to go on a choose your own eddy adventure!
+# 1. Identify an eddy in the map above (hint: look for closed contours of sea level anomaly, it can be positive or negative) crossed by the Saildrone track
+#
+# 2. Note the latitude and longitude at the the center of the eddy you've chosen from the x and y axes and update the values for `eddy_longitude` and `eddy_latitude` to match your eddy center in the code cell below.
+#
+#
+
+eddy_longitude = 212
+eddy_latitude = -53
+
+# Now that you've chosen an eddy, we can zoom in to look in more detail at the sea level anomaly. We can also add satellite chlorophyll-a data. The chlorophyll-a data gives an approximate estimate of the relative phytoplankton biomass (in units of mg/m<sup>3</sup>) at the sea surface. 
 #
 # Again we need to load in the satellite chlorophyll-a data first, this time an 8-day average around the time the Saildrone crossed the eddy.
 
 satellite_chla = xr.open_dataset(data_dir + 'A20190412019048.L3m_8D_CHL_chlor_a_4km.nc')
 
-# As above, you can edit parameters (colors, range etc) for the map below
+# Here we are setting the inputs (colors, range etc) to plot the sea level anomaly (in black contours) and satellite chlorophyll-a data (in color) of your eddy on the same map:
 
-levels_1 = np.arange(0,1.0,0.01) #contour levels
-cmap_1 = 'YlGnBu' #contour map colormap
-c1 = 'black' #Saildrone track color
+levels_1 = np.arange(-0.6,0.4,0.05) #levels of sea level anomaly to contour
+c1 = 'black' #sea level anomaly contour color
+levels_2 = np.arange(0,1.0,0.01) #contour levels for chlorophyll-a
+cmap_2 = 'YlGnBu' #chlorophyll-a contour map colormap
+c2 = 'magenta' #Saildrone track color
 
 # Make the map:
 
 # +
 satellite_chla.chlo_a.values[satellite_chla.chlo_a>1000] = np.nan
-xr.plot.contourf(satellite_chla.chlo_a, levels = levels_1, cmap=cmap_1,size=8,aspect=2)
-plt.xlim(tlon-5,tlon+5)
-plt.ylim(tlat-5,tlat+5)
+xr.plot.contour(satellite_ssh.sla[0,:,:],levels=levels_1,colors=c1,linewidths=0.75,size=8,aspect=1.3)
+plt.contourf(satellite_chla.lon+360,satellite_chla.lat,satellite_chla.chlo_a, levels = levels_2, cmap=cmap_2)
+plt.xlim(eddy_longitude-4,eddy_longitude+4)
+plt.ylim(eddy_latitude-4,eddy_latitude+4)
+
+#add colorbar
+cbar = plt.colorbar()
+cbar.set_label('chlorophyll-a concentration [mg m$^{-3}$]')
 
 #add Saildrone track
-plt.scatter(Saildrone_phys.longitude, Saildrone_phys.latitude, c=c1, s=3, label='Saildrone', zorder=1000)
+plt.scatter(Saildrone_phys.longitude+360, Saildrone_phys.latitude, c=c2, s=3, label='Saildrone', zorder=1000)
 plt.legend()
 
 #save figure
@@ -293,39 +313,42 @@ plt.title('Saildrone path and chlorophyll-a concentration')
 plt.savefig(output_dir + 'Sea_surface_chlorophylla_Saildrone_Feb10' + '.jpg')
 # -
 
-# **Q: There are some gaps in the map of chlorophyll-a where there are no data, any ideas why this might be? Can you see the impact of eddies on chlorophyll-a concentrations? How do these compare with the sea level anomaly map above?**
+# **Q: There may be some gaps in the map of chlorophyll-a where there are no data (white areas), any ideas why this might be? Can you see the impact of eddies on chlorophyll-a concentrations? How do these compare with the sea level anomaly map above?**
 #
-# To take this one step further we can add the Saildrone data observations on a map of satellie data to see if there is a relationship between the satellite observations and what the Saildrone measured directly in the ocean. Note that the Saildrone took a few days to cross this region, while the satellite data shown here is a snapshot for a single day, so it can be tricky to compare the two types of data because the Saildrone is moving in space AND time.
+# To take this one step further we can add the Saildrone data observations on a satellite map of your eddy to see if there is a relationship between the satellite observations and what the Saildrone measured directly in the ocean. Note that the Saildrone took a few days to cross this region, while the satellite data shown here is a snapshot for a single day, so it can be tricky to compare the two types of data because the Saildrone is moving in space AND time.
 #
 # We'll make a map of the sea level anomaly again as above, and choose a variable (`var`) from the Saildrone data to plot on top of the satellite map. As before we will start with sea surface temperature, but you can try changing the figure inputs in the code below to plot different variables and see which variables have a relationship to sea level anomaly.
 
 var = 'TEMP_CTD_RBR_MEAN' #choose which variable to plot
-v_min = 6 #set minimum and maximum colorbar limits
+var_name = 'Temperature (degrees C)' #name for variable to label colorbar
+v_min = 6 #set minimum and maximum variable colorbar limits
 v_max = 12
-cmap_1 = 'viridis'#choose colormap for map
+levels_1 = np.arange(-0.6,0.4,0.05) #levels of sea level anomaly to contour
+cmap_1 = 'viridis'#choose colormap for sea level anomaly map
 cmap_2 = 'RdBu_r' #choose colormap for Saildrone variable
 
 # Make the map:
 
 # +
 #make a contour plot of satellite ssh
-xr.plot.contourf(satellite_ssh.adt[0,:,:],levels=np.arange(-1.2,0.8,0.1),cmap=cmap_1,size=8,aspect=2)
-xr.plot.contour(satellite_ssh.adt[0,:,:],levels=np.arange(-1.2,0.8,0.1),colors='black',linewidths=0.75)
-plt.xlim(tlon+360-5,tlon+360+5)
-plt.ylim(tlat-5,tlat+5)
+xr.plot.contourf(satellite_ssh.sla[0,:,:],levels=levels_1,cmap=cmap_1,size=8,aspect=1.5)
+xr.plot.contour(satellite_ssh.sla[0,:,:],levels=levels_1,colors='black',linewidths=0.75)
+plt.xlim(eddy_longitude-4,eddy_longitude+4)
+plt.ylim(eddy_latitude-4,eddy_latitude+4)
 
 #add Saildrone data scattered on top
 plt.scatter(Saildrone_phys.longitude+360, Saildrone_phys.latitude, c=Saildrone_phys[var], s=15, cmap = cmap_2,
             vmin=v_min,vmax=v_max,label='Saildrone', zorder=1000)
 plt.legend()
-plt.colorbar()
+cbar = plt.colorbar()
+cbar.set_label(var_name)
 
 #add title and save figure
 plt.title('Saildrone ' + var[:4] + ' across an eddy on Feb 10th')
 plt.savefig(output_dir + 'Sea_surface_height_Saildrone_' + var[:4] + '_Feb10' + '.jpg')
 # -
 
-# **Q: What did you notice when you plotted temperature on the map of sea level anomaly? Are they related? Did you find any relationships between the sea level anomaly and other variables measured by the Saildrone?**
+# **Q: What did you notice when you plotted temperature on the map of sea level anomaly? Are they related? Can you find any relationships between the sea level anomaly and other variables measured by the Saildrone?**
 
 # ## 4. Time series analysis 
 # Now that we've plotted some Saildrone and satellite data on maps to see how different ocean variables are related, there are other ways we can look at the relationship between ocean variables. 
@@ -345,7 +368,21 @@ var2_min = 230
 var2_max = 340
 # -
 
-# First we'll plot the time series of the two variable for the entire Saildrone mission
+# First we'll plot the time series of the two variable for the entire Saildrone mission:
+
+# +
+plt.figure(figsize=(12,5))
+ax1= plt.subplot(211)
+ax1.plot(Saildrone_phys.time,Saildrone_phys[var1])
+plt.xlim(Saildrone_phys.time.values[0],Saildrone_phys.time.values[-1])
+plt.ylabel(var1)
+
+ax2 = plt.subplot(212)
+ax2.plot(Saildrone_phys.time,Saildrone_phys[var2])
+plt.xlim(Saildrone_phys.time.values[0],Saildrone_phys.time.values[-1])
+plt.ylabel(var2)
+plt.show()
+# -
 
 # Next, we can make a scatter plot to compare the two variables, one on the x-axis and one on the y-axis:
 
@@ -364,25 +401,24 @@ plt.title('Saildrone '+ var1[:4] + ' vs ' + var2[:4])
 plt.savefig(output_dir + 'Saildrone_' + var1[:4] + '_vs_' + var2[:4] + '.jpg')
 # -
 
-# **Q: what do you notice about the pattern in the scatter plot? What does this imply about the relationship between sea surface temperature and oxygen concentration? If you go back to the inputs above and choose two different variables and re-run the code, can you find two different variables that are related? Is the relationship similar or different than the relationship between temperature and oxygen?**
+# **Q: what do you notice about the pattern in the scatter plot? What does this imply about the relationship between sea surface temperature and oxygen concentration? Can you come up with any ideas of why temperature and oxygen concentrations are related? If you go back to the inputs defining `var1` and `var2` above and choose two different variables and re-run the code, can you find two different variables that are related? Is the relationship similar or different than the relationship between temperature and oxygen?**
 
-# If we want to look at the relationship between more than two variables, one way we can look at this is by using a third variable to change the color of the scatter plot points.
+# If we want to look at the relationship between more than two variables, one way to do this is by using a third variable to change the color of the scatter plot points.
 #
-# In this example, the scatter plot shows the same variable 1 and 2 from the Saildrone on the x and y axes as above, but we can choose a third Saildrone variable as the color of the scatter plot points.
+# In this example, the scatter plot shows the same variable 1 and 2 from the Saildrone on the x and y axes as above, but we can choose a third Saildrone variable as the color of the scatter plot points. In this example we'll try Latitude as the third variable to begin with.
 
-# +
-#choose a third variable 
-var3 = 'latitude'
+var3 = 'latitude'#choose a third variable 
+var3_min = -65 #set lower and upper limits of variable 3 for plotting
+var3_max = -45
+cmap_1 = 'viridis' #colormap to use for third variable
 
-#set lower and upper limits of variable 3 for plotting
-var3_min = -65
-var3_max = -40
+# Now make a scatter plot, colored by the third variable:
 
 # +
 #create scatter plot
 plt.figure(figsize=(12,8))
 plt.scatter(Saildrone_phys[var1], Saildrone_phys[var2], c=Saildrone_phys[var3], 
-            s=10, vmin = var3_min, vmax = var3_max)
+            s=10, cmap = cmap_1, vmin = var3_min, vmax = var3_max)
 plt.xlim(var1_min,var1_max)
 plt.ylim(var2_min,var2_max)
 plt.xlabel(var1)
@@ -396,36 +432,14 @@ plt.title('Saildrone '+ var1[:4] + ' vs ' + var2[:4])
 plt.savefig(output_dir + 'Saildrone_' + var1[:4] + '_vs_' + var2[:4] + '_vs_' + var3[:4] + '.jpg')
 # -
 
-# Plot time series of wind speed and pressure
+# **Q: Is there a relationship between the third variable (color) and the two existing variables on the x and y axes? Try changing the third variable to something else to see if you get a different relationship. What did you find?**
 
-#calc wind speed from u and v winds
-Saildrone_phys['WSPD'] = np.sqrt(np.power(Saildrone_phys['UWND_MEAN'],2)+np.power(Saildrone_phys['VWND_MEAN'],2))
-
-# +
-#input plot parameters
-
-#variables to plot
-var1 = 'WSPD'
-var2 = 'BARO_PRES_MEAN'
-
-#set x axis limits
-
-# +
-#plot time series
-plt.figure(figsize=(12,5))
-ax1 = plt.subplot(211)
-ax1.plot(Saildrone_phys.time,Saildrone_phys[var1])
-plt.xlim(Saildrone_phys.time.values[0],Saildrone_phys.time.values[-1])
-plt.ylabel(var1)
-
-ax2 = plt.subplot(212)
-ax2.plot(Saildrone_phys.time,Saildrone_phys[var2])
-plt.xlim(Saildrone_phys.time.values[0],Saildrone_phys.time.values[-1])
-plt.ylabel(var2)
-plt.show()
-# -
-# Next, we can calculate the flux of carbon between the ocean and the atmosphere based on the difference in pCO2 between the atmosphere and the ocean. 
-
+# ***
+#
+# One thing we can investigate in the Saildrone time series data is how fluxes of carbon dioxide between the atmosphere and ocean are influenced by variations in properties of the atmosphere and ocean.
+#
+# Winds are an important driver of fluxes of carbon, so we can first compare the wind speed to the air-sea carbon flux.
+# We can calculate the flux of carbon between the ocean and the atmosphere, which is based on the difference in pCO2 between the atmosphere and the ocean. 
 
 # +
 #constants for CO2 flux calculation
@@ -452,7 +466,7 @@ a = np.exp(K0)
 Saildrone_CO2['FCO2'] = 0.24 * K * a * dpCO2  #FCO2 = K*a(dpCO2)
 # -
 
-# Let's plot the time series of carbon fluxes together with the time series of wind speed to see how they are related. Sign of FCO2?
+# Let's plot the time series of carbon fluxes together with the time series of wind speed to see how they are related. **Nancy check sign/magnitude of FCO2?**
 
 # +
 #variables to plot
@@ -494,5 +508,7 @@ plt.xlim(Saildrone_CO2['datetime'][0],Saildrone_CO2['datetime'][1800])
 fig.tight_layout()
 plt.show()
 # -
+# **Q: What is the relationship between wind speed and air-sea carbon fluxes? How do you think wind impacts the exchange of carbon between the atmosphere and ocean? On what timescales are the wind speed and carbon fluxes varying? The magnitude and sign of the air-sea carbon fluxes are affected by the ocean as well, can you try comparing the carbon flux 'FCO2' time series to ocean variables from `Saildrone_CO2`? For example sea surface temperature (`SST (C)`), seawater pCO2 (`pCO2 SW (sat) uatm`). Remmember you can check the variable in the `Saildrone_CO2` file by running the Python command `Saildrone_CO2.columns`** 
+
 
 
