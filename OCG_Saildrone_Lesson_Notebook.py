@@ -63,7 +63,7 @@ import matplotlib.path as mpath
 import cartopy.crs as ccrs
 import cartopy.feature
 from datetime import datetime
-#import plotly.graph_objects as go
+import plotly.graph_objects as go
 
 # ### Define file paths
 # Next, we'll define file paths so that the code knows where to find the data files and where to save output, like figures
