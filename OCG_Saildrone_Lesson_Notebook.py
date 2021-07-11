@@ -49,6 +49,11 @@
 # You got here by launching a Binder from our OCG Github Page. A Binder is a virtual environment which has been built to include all of the dependencies we listed in our setup files. This allows you to run python code without having to install Python on your local machine. You then launched a Jupyter Notebook, which is an interactive interface for running Python code.  It allows you to take smaller steps through the code and examine the output along the way. It also allows you to add "markup" which is extra text (instructions, notes to yourself, etc) and pictures!
 #
 # ![Notebook View](Images/RunningJupyterLabNotebook.png)
+#
+#
+# Some of the cells of code may take up to a minute to run because they're doing a lot of data munging behind the scenes. If a cell is running, you'll see an hourglass at the top of the tab, and a little star ( * ) icon to the left of the cell. Be patient! If it seems to be taking too long, or you see an error in your code that you want to go ahead and fix, you can always press the stop (square) button at the top and then rerun the cell.
+#
+# ![Notebook Still Running Hourglass and Star](Images/NotebookSillRunningIndicator.png)
 
 # ### Load Python modules (the beginning of every python script/notebook!)
 #
@@ -399,8 +404,6 @@ plt.savefig(output_dir + 'Saildrone_' + var1[:4] + '_vs_' + var2[:4] + '.jpg')
 # If we want to look at the relationship between more than two variables, one way to do this is by using a third variable to change the color of the scatter plot points.
 #
 # In this example, the scatter plot shows the same variable 1 and 2 from the Saildrone on the x and y axes as above, but we can choose a third Saildrone variable as the color of the scatter plot points. In this example we'll try Latitude as the third variable to begin with.
-
-
 
 var3 = 'latitude'#choose a third variable 
 var3_min = -65 #set lower and upper limits of variable 3 for plotting
