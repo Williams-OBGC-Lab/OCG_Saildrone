@@ -20,8 +20,6 @@
 #
 
 # ## To Do List:
-# * try plotting previous 8-day chl-a snapshot to see if it has better coverage for the eddy crossing
-# * Check Veronica's carbon flux calculation is correct and add units (Nancy)
 # * Look at Chelle Gentemann's notebook and see if anything you want to bring in https://github.com/python4oceanography/ocean_python_tutorial/blob/master/notebooks/Tutorial_08_Xarray-Collocate_gridded_data_with_experiment.ipynb
 #
 # ***
@@ -447,29 +445,29 @@ S  = Saildrone_CO2['Salinity'] #sea surface salinity
 u = Saildrone_CO2['WSPD (m/s)'] #surface wind speed
 dpCO2 = Saildrone_CO2['dpCO2'] #difference between ocean and atmosphere pCO2
 
-#1. Calculate the transfer velocity (Wanninkhof et al. 2014)
+#1. Calculate the transfer velocity, K (Wanninkhof et al. 2014)
 #Schmidt number as a function of temperature 
-Sc = 2116.8-136.25*T  + 4.7353*np.power(T,2) - 0.092307*np.power(T,3) + 0.000755*np.power(T,4)
+Sc = 2116.8 - 136.25*T  + 4.7353*np.power(T,2) - 0.092307*np.power(T,3) + 0.0007555*np.power(T,4)
 K = 0.251*(u*u)*np.power((Sc/660),-0.5)
-K = K
 
-#2. calculate solubility constant as a function of temperature and salinity 
+#2. calculate solubility constant as a function of temperature and salinity (Weiss, 1974)
 T_K = T + 273.15
-K0 = -58.0931 + ( 90.5069*(100.0 /T_K) ) \
-    + (22.2940 * (np.log(T_K/100.0))) + (S * (0.027766 +  ( (-0.025888)*(T_K/100.0)) \
-    + (0.0050578*( (T_K/100.0)*(T_K/100.0) ) ) ) )
+K0 = -60.2409 + ( 93.4517*(100.0 /T_K) ) \
+    + (23.3585 * (np.log(T_K/100.0))) + (S * (0.023517 +  ( (-0.023656)*(T_K/100.0)) \
+    + (0.0047036*( (T_K/100.0)*(T_K/100.0) ) ) ) )
 a = np.exp(K0)
 
 #CO2 flux equation
-Saildrone_CO2['FCO2'] = 0.24 * K * a * dpCO2  #FCO2 = K*a(dpCO2)
+#Positive CO2 Flux means CO2 is going OUT of the Ocean
+Saildrone_CO2['FCO2 mmol m-2 day-1'] = 0.24 * K * a * dpCO2  #FCO2 = K*a(dpCO2)
 # -
 
-# Let's plot the time series of carbon fluxes together with the time series of wind speed to see how they are related. **Nancy check sign/magnitude of FCO2?**
+# Let's plot the time series of carbon fluxes together with the time series of wind speed to see how they are related.
 
 # +
 #variables to plot
 var1 = 'WSPD (m/s)'
-var2 = 'FCO2'
+var2 = 'FCO2 mmol m-2 day-1'
 
 #colors
 c1 = 'darkblue'
@@ -493,15 +491,19 @@ ax1.set_xlabel('date')
 ax1.set_ylabel(var1, color=c1)
 ax1.tick_params(axis='y', labelcolor=c1)
 
+ax1.plot([Saildrone_CO2['datetime'].values[0], Saildrone_CO2['datetime'].values[-1]],[0,0],
+         color=c1, linewidth=0.5)
+
 #y axis 2
 ax2 = ax1.twinx()
-ax2.plot(Saildrone_CO2['datetime'],-Saildrone_CO2[var2],color=c2)
+ax2.plot(Saildrone_CO2['datetime'],Saildrone_CO2[var2],color=c2)
 ax2.set_xlabel('date')
 ax2.set_ylabel(var2, color=c2)
 ax2.tick_params(axis='y', labelcolor=c2)
 
 ax2.plot([Saildrone_CO2['datetime'].values[0], Saildrone_CO2['datetime'].values[-1]],[0,0],
-         color='black', linewidth=0.5)
+         color=c2, linewidth=0.5)
+
 plt.xlim(Saildrone_CO2['datetime'][0],Saildrone_CO2['datetime'][1800])
 fig.tight_layout()
 plt.show()
