@@ -14,16 +14,15 @@
 # ---
 
 # # 2021 Oceanography Camp for Girls (OCG) Saildrone Lab
-# #### Developed by Nancy Williams, Veronica Tamsitt, and Nicola Guisewhite at [University of South Florida College of Marine Science Williams Lab](https://www.marine.usf.edu/nancy-williams/) for [USF CMS's Oceanography Camp for Girls](https://www.usf.edu/marine-science/community-engagement/oceanography-camp-for-girls/index.aspx)
+# #### Developed by Dr. Nancy Williams, Dr. Veronica Tamsitt, and Nicola Guisewhite at [University of South Florida College of Marine Science Williams Lab](https://www.marine.usf.edu/nancy-williams/) for [USF CMS's Oceanography Camp for Girls](https://www.usf.edu/marine-science/community-engagement/oceanography-camp-for-girls/index.aspx)
+#
+# <div>
+# <img src="Images/SD_1020_A_6.jpeg" width="300"/>
+# </div>
 #
 # #### Funded by the National Science Foundation Office of Polar Programs [Grant Number PLR2048840](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2048840)
 #
 
-# ## To Do List:
-# * Look at Chelle Gentemann's notebook and see if anything you want to bring in https://github.com/python4oceanography/ocean_python_tutorial/blob/master/notebooks/Tutorial_08_Xarray-Collocate_gridded_data_with_experiment.ipynb
-#
-# ***
-#
 # ## Data Sources:
 # * Saildrone 1-minute physical and ADCP data available from: https://data.saildrone.com/data/sets/antarctica-circumnavigation-2019
 # (login required, so cannot be accessed using an FTP. Will need to download ahead)
@@ -41,6 +40,7 @@
 # 3. Mapping the Saildrone circumnavigation path and plotting physical data along the path
 # 4. Comparing the Saildrone data to maps of satellite sea surface height and chlorophyll-a
 # 5. Time series analysis of the Saildrone data, looking at the relationship between air-sea carbon fluxes and other ocean and atmospheric variables
+# ***
 
 # ## 1. Anatomy of a Jupyter Notebook
 #
@@ -71,6 +71,7 @@ from datetime import datetime
 # ### Define file paths
 # Next, we'll define file paths so that the code knows where to find the data files and where to save output, like figures. These folders already exist, we're just telling Python where to find them.
 
+# This is how you make a comment! It tells Python that this isn't computer code, but notes for humans
 output_dir = 'Output/' #this is where the output from this notebook will be saved
 data_dir = 'Data/' #this is where the data already live
 
@@ -96,7 +97,7 @@ Saildrone_CO2 = pd.read_csv(
 
 Saildrone_CO2
 
-# As well as the Saildrone carbon data, there is another data file containing one-minute averaged physical data that we will also import into the work space (this one has already been added to the data directory `data_dir` ahead of time).
+# As well as the hourly Saildrone carbon data, there is another data file containing one-minute averaged physical data that we will also import into the work space (this one has already been added to the data directory `data_dir` ahead of time).
 
 ds = xr.open_dataset(data_dir + 'saildrone-gen_5-antarctica_circumnavigation_2019-sd1020-20190119T040000-20190803T043000-1_minutes-v1.1620360815446.nc')
 Saildrone_phys = ds.to_dataframe()
@@ -170,11 +171,11 @@ plt.show()
 
 # Congratulations! You've now made a map of the Saildrone circumnavigation track and it has been saved in the output folder as `SaildroneMap.jpg`.
 #
-# **Q: why is it useful to compare the Saildrone path with the position of the fronts of the Antarctic Circumpolar Curreent? How much of the Saildrone path lies within the boundaries of the Antarctic Circumpolar Current?**
+# **Q: Why is it useful to compare the Saildrone path with the position of the fronts of the Antarctic Circumpolar Curreent? How much of the Saildrone path lies within the boundaries of the Antarctic Circumpolar Current?**
 #
-# We can make our map more interesting by using coloured scatter points to show a variable from the Saildrone data on the map. In the following code cell we define which data variable to plot on the map (defined as `var`), which colormap to use to plot the data (defined as `cmap_1`, see more colormap options [here](https://matplotlib.org/stable/tutorials/colors/colormaps.html)), and the lower and upper data values to use for the colormap (defined as `v_min` and `v_max`). Initially this code is set up to plot the sea surface temperature (`TEMP_CTD_RBR_MEAN`) from the Saildrone physical data, but once you've made the figure below you can try changing `var` and re-run the code below to plot a different variable (to see a list of all the variables in `Saildrone_phys` you can run `Saildrone_phys.columns` in a code cell). If you plot a different variable you might also want to play with changing the colorbar and colorbar limits.
+# We can make our map more interesting by using coloured scatter points to show a variable from the Saildrone sensor data on the map. In the following code cell we define which data variable to plot on the map (defined as `var`), which colormap to use to plot the data (defined as `cmap_1`, see more colormap options [here](https://matplotlib.org/stable/tutorials/colors/colormaps.html)), and the lower and upper data values to use for the colormap (defined as `v_min` and `v_max`). Initially this code is set up to plot the sea surface temperature (`TEMP_CTD_RBR_MEAN`) from the Saildrone physical data, but once you've made the figure below you can try changing `var` and re-run the code below to plot a different variable (to see a list of all the variables in `Saildrone_phys` you can run `Saildrone_phys.columns` in a code cell). If you plot a different variable you might also want to play with changing the colorbar and colorbar limits.
 
-var = 'TEMP_CTD_RBR_MEAN'#which variable to plot?
+var = 'TEMP_CTD_RBR_MEAN'# which variable to plot?
 cmap_1 = 'bwr'
 v_min = -2
 v_max = 15
@@ -213,7 +214,7 @@ cb1 = plt.colorbar()
 
 # Save the figure in the output folder
 plt.title('2019 Saildrone ' + var[:4])
-plt.savefig(output_dir + var[:4] + 'SaildroneMap' + '.jpg') # Changing the suffix will change the format
+plt.savefig(output_dir + 'SaildroneMap' + var[:4] + '.jpg') # Changing the suffix will change the format
 plt.show()
 # -
 
@@ -221,7 +222,7 @@ plt.show()
 
 # ## 4. Comparing Saildrone with satellite observations
 #
-# Now that we've looked at some of the Saildrone data on a map, it's useful to put the data into context by plotting the Saildrone path on maps of surface ocean properties obtained from satellites. In particular, satellite sea surface height (measured in meters relative to background sea level) gives us a measure of pressure differences at the ocean surface, and therefore the direction of the surface currents (similar to pressure lines on a weather map). Ocean eddies can be identified by closed rings of constant sea level anomaly (measured in meters). We know that the Saildrone crossed an eddy on around Feb 10th 2019, so we can make a map of sea level anomaly on that day to see the path of the Saildrone across the eddy. 
+# Now that we've looked at some of the Saildrone data on a map, it's useful to put the data into context by plotting the Saildrone path on maps of surface ocean properties obtained from satellites. In particular, satellite sea surface height or SSH (measured in meters relative to background sea level) gives us a measure of pressure differences at the ocean surface, and therefore the direction of the surface currents (similar to pressure lines on a weather map). Ocean eddies can be identified by closed rings of constant sea level anomaly (measured in meters). We know that the Saildrone crossed an eddy on around Feb 10th 2019, so we can make a map of sea level anomaly on that day to see the path of the Saildrone across the eddy. 
 #
 # First we'll load the satellite data file, which is a single daily snapshot.
 
@@ -239,11 +240,12 @@ c1 = 'magenta' #Saildrone track color
 
 # +
 #finding position of Saildrone on Feb 10
-time_index = np.argwhere(Saildrone_phys.time.values==np.datetime64('2019-02-10'))[0]
+date='2019-02-10'
+time_index = np.argwhere(Saildrone_phys.time.values==np.datetime64(date))[0]
 tlon = Saildrone_phys.longitude.values[time_index]
 tlat = Saildrone_phys.latitude.values[time_index]
 
-#make a contour plot of satellite ssh
+#make a contour plot of satellite ssh going a specific distance to the E, W, N, and S of Feb 10 location
 xr.plot.contourf(satellite_ssh.sla[0,:,:],levels=levels_1,cmap=cmap_1,size=8,aspect=2)
 xr.plot.contour(satellite_ssh.sla[0,:,:],levels=levels_1,colors='k',linewidths=0.75)
 plt.xlim(tlon+360-24,tlon+360+24)
@@ -257,8 +259,8 @@ plt.scatter(Saildrone_phys.longitude+360, Saildrone_phys.latitude, c=c1, s=3, la
 plt.legend()
 
 #give the plot a title and save figure in the output folder
-plt.title('Saildrone path across an eddy on Feb 10th')
-plt.savefig(output_dir + 'Sea_surface_height_Saildrone_Feb10' + '.jpg')
+plt.title('Saildrone path across an eddy on ' + date)
+plt.savefig(output_dir + 'Sea_surface_height_Saildrone_' + date + '.jpg')
 # -
 
 # **Q: What do you see in the sea level anomaly? Can you identify the eddies crossed by the Saildrone (magenta line)?**
@@ -275,7 +277,7 @@ eddy_latitude = -53
 
 # Now that you've chosen an eddy, we can zoom in to look in more detail at the sea level anomaly. We can also add satellite chlorophyll-a data. The chlorophyll-a data gives an approximate estimate of the relative phytoplankton biomass (in units of mg/m<sup>3</sup>) at the sea surface. 
 #
-# Again we need to load in the satellite chlorophyll-a data first, this time an 8-day average around the time the Saildrone crossed the eddy.
+# Again we need to load in the satellite chlorophyll-a data first, this time an 8-day average around the time the Saildrone crossed through this region.
 
 satellite_chla = xr.open_dataset(data_dir + 'A20190412019048.L3m_8D_CHL_chlor_a_4km.nc')
 
@@ -364,7 +366,7 @@ var2_min = 230
 var2_max = 340
 # -
 
-# First we'll plot the time series of the two variable for the entire Saildrone mission:
+# First we'll plot the time series of the two variables for the entire Saildrone mission:
 
 # +
 plt.figure(figsize=(12,5))
@@ -509,6 +511,3 @@ fig.tight_layout()
 plt.show()
 # -
 # **Q: What is the relationship between wind speed and air-sea carbon fluxes? How do you think wind impacts the exchange of carbon between the atmosphere and ocean? On what timescales are the wind speed and carbon fluxes varying? The magnitude and sign of the air-sea carbon fluxes are affected by the ocean as well, can you try comparing the carbon flux 'FCO2' time series to ocean variables from `Saildrone_CO2`? For example sea surface temperature (`SST (C)`), seawater pCO2 (`pCO2 SW (sat) uatm`). Remmember you can check the variable in the `Saildrone_CO2` file by running the Python command `Saildrone_CO2.columns`** 
-
-
-
