@@ -283,16 +283,15 @@ satellite_chla = xr.open_dataset(data_dir + 'A20190412019048.L3m_8D_CHL_chlor_a_
 
 levels_1 = np.arange(-0.5,0.5,0.05) #levels of sea level anomaly to contour
 c1 = 'black' #sea level anomaly contour color
-levels_2 = np.arange(0,1.0,0.01) #contour levels for chlorophyll-a
-cmap_2 = 'YlGnBu' #chlorophyll-a contour map colormap
-c2 = 'magenta' #Saildrone track color
+levels_2 = np.arange(-1,0,0.05) #contour levels for chlorophyll-a
+cmap_2 = 'winter' #chlorophyll-a contour map colormap
+c3 = 'magenta' #Saildrone track color
 
 # Make the map:
 
 # +
-satellite_chla.chlo_a.values[satellite_chla.chlo_a>1000] = np.nan
 xr.plot.contour(satellite_ssh.sla[0,:,:],levels=levels_1,colors=c1,linewidths=0.75,size=8,aspect=1.3)
-plt.contourf(satellite_chla.lon+360,satellite_chla.lat,satellite_chla.chlo_a, levels = levels_2, cmap=cmap_2)
+plt.contourf(satellite_chla.lon+360,satellite_chla.lat,np.log10(satellite_chla.chlo_a), levels = levels_2, cmap=cmap_2)
 plt.xlim(eddy_longitude-4,eddy_longitude+4)
 plt.ylim(eddy_latitude-4,eddy_latitude+4)
 
@@ -301,7 +300,11 @@ cbar = plt.colorbar()
 cbar.set_label('chlorophyll-a concentration [mg m$^{-3}$]')
 
 #add Saildrone track
-plt.scatter(Saildrone_phys.longitude+360, Saildrone_phys.latitude, c=c2, s=3, label='Saildrone', zorder=1000)
+plt.scatter(Saildrone_phys.longitude+360, Saildrone_phys.latitude, c=c3, s=3, label='Saildrone', zorder=1000)
+
+#add Subantarctic Front
+plt.plot(saf['lon']+360, saf['lat'], color='Orange', linewidth=3, label = 'Subantarctic Front')
+
 plt.legend()
 
 #save figure
