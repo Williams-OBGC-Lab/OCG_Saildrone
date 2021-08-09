@@ -8,7 +8,7 @@
 #       format_version: '1.5'
 #       jupytext_version: 1.11.3
 #   kernelspec:
-#     display_name: Python 3 (ipykernel)
+#     display_name: Python 3
 #     language: python
 #     name: python3
 # ---
@@ -501,3 +501,5 @@ fig.tight_layout()
 plt.show()
 # -
 # **Q: What is the relationship between wind speed and air-sea carbon fluxes? How do you think wind impacts the exchange of carbon between the atmosphere and ocean? On what timescales are the wind speed and carbon fluxes varying? The magnitude and sign of the air-sea carbon fluxes are affected by the ocean as well, can you try comparing the carbon flux 'FCO2' time series to ocean variables from `Saildrone_CO2`? For example sea surface temperature (`SST (C)`), seawater pCO2 (`pCO2 SW (sat) uatm`). Remmember you can check the variable in the `Saildrone_CO2` file by running the Python command `Saildrone_CO2.columns`** 
+
+
